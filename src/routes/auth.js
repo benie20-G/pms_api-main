@@ -6,35 +6,12 @@ const { PrismaClient } = require('@prisma/client');
 const { sendVerificationEmail, sendPasswordResetEmail } = require('../utils/email');
 const { generateOTP } = require('../utils/helpers');
 
+const dotenv = require('dotenv');
+dotenv.config();
+const JWT_SECRET = "9cd945ca506a9a4ce8c20091dda963a046df76be0c801f7f1d77dc317903f345"
+
 const prisma = new PrismaClient();
 
-/**
- * @swagger
- * /api/auth/register:
- *   post:
- *     summary: Register a new user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *               - firstName
- *               - lastName
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               firstName:
- *                 type: string
- *               lastName:
- *                 type: string
- */
 router.post('/register', async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
@@ -71,27 +48,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/auth/verify:
- *   post:
- *     summary: Verify user email
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - token
- *             properties:
- *               email:
- *                 type: string
- *               token:
- *                 type: string
- */
 router.post('/verify', async (req, res) => {
   try {
     const { email, token } = req.body;
@@ -119,27 +75,6 @@ router.post('/verify', async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/auth/login:
- *   post:
- *     summary: Login user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- */
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -160,8 +95,8 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { userId: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      process.env.JWT_SCRET_KEY || JWT_SECRET,
+      { expiresIn: 86400 }
     );
 
     res.json({
@@ -175,28 +110,11 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Error logging in' });
   }
 });
 
-/**
- * @swagger
- * /api/auth/forgot-password:
- *   post:
- *     summary: Request password reset
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *             properties:
- *               email:
- *                 type: string
- */
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -220,30 +138,6 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/auth/reset-password:
- *   post:
- *     summary: Reset password
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - token
- *               - newPassword
- *             properties:
- *               email:
- *                 type: string
- *               token:
- *                 type: string
- *               newPassword:
- *                 type: string
- */
 router.post('/reset-password', async (req, res) => {
   try {
     const { email, token, newPassword } = req.body;

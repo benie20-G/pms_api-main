@@ -71,6 +71,8 @@ model User {
   vehicles      Vehicle[]
   parkingRequests ParkingRequest[]
   notifications Notification[]
+
+    @@map("users")
 }
 
 model Vehicle {

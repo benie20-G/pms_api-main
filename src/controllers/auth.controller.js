@@ -76,6 +76,11 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        if (!process.env.JWT_SCRET_KEY) {
+            console.error('JWT_SCRET_KEY is not defined in environment variables');
+            return ServerResponse.serverError(res, 'Server configuration error');
+        }
+
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
             return ServerResponse.notFound(res, 'User not found');
@@ -91,9 +96,16 @@ const login = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { userId: user.id, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: '24h' }
+            { 
+                userId: user.id, 
+                role: user.role,
+                email: user.email 
+            },
+            process.env.JWT_SCRET_KEY,
+            { 
+                expiresIn: '24h',
+                algorithm: 'HS256'
+            }
         );
 
         return ServerResponse.success(res, 'Login successful', {

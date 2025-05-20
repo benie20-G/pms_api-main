@@ -5,38 +5,6 @@ const { authenticateToken, authorizeRole } = require('../middleware/auth');
 
 const prisma = new PrismaClient();
 
-/**
- * @swagger
- * /api/parking:
- *   post:
- *     summary: Create a new parking location (Admin only)
- *     tags: [Parking]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - code
- *               - name
- *               - totalSpaces
- *               - location
- *               - feePerHour
- *             properties:
- *               code:
- *                 type: string
- *               name:
- *                 type: string
- *               totalSpaces:
- *                 type: integer
- *               location:
- *                 type: string
- *               feePerHour:
- *                 type: number
- */
 router.post('/', authenticateToken, authorizeRole(['ADMIN']), async (req, res) => {
   try {
     const { code, name, totalSpaces, location, feePerHour } = req.body;
@@ -58,15 +26,6 @@ router.post('/', authenticateToken, authorizeRole(['ADMIN']), async (req, res) =
   }
 });
 
-/**
- * @swagger
- * /api/parking:
- *   get:
- *     summary: Get all parking locations
- *     tags: [Parking]
- *     security:
- *       - bearerAuth: []
- */
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const parkings = await prisma.parking.findMany({
@@ -87,21 +46,6 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/parking/{code}:
- *   get:
- *     summary: Get parking location by code
- *     tags: [Parking]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: code
- *         required: true
- *         schema:
- *           type: string
- */
 router.get('/:code', authenticateToken, async (req, res) => {
   try {
     const { code } = req.params;
@@ -129,36 +73,6 @@ router.get('/:code', authenticateToken, async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/parking/{code}:
- *   put:
- *     summary: Update parking location (Admin only)
- *     tags: [Parking]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: code
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               totalSpaces:
- *                 type: integer
- *               location:
- *                 type: string
- *               feePerHour:
- *                 type: number
- */
 router.put('/:code', authenticateToken, authorizeRole(['ADMIN']), async (req, res) => {
   try {
     const { code } = req.params;
@@ -186,21 +100,6 @@ router.put('/:code', authenticateToken, authorizeRole(['ADMIN']), async (req, re
   }
 });
 
-/**
- * @swagger
- * /api/parking/{code}:
- *   delete:
- *     summary: Delete parking location (Admin only)
- *     tags: [Parking]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: code
- *         required: true
- *         schema:
- *           type: string
- */
 router.delete('/:code', authenticateToken, authorizeRole(['ADMIN']), async (req, res) => {
   try {
     const { code } = req.params;

@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Kigali Parking Management System API",
+    "title": "Parking Management System API",
     "version": "1.0.0",
     "description": "API for managing parking, users, car entries/exits, tickets, and reporting."
   },

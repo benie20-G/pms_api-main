@@ -26,7 +26,7 @@ transporter.verify(function (error, success) {
 const sendAccountVerificationEmail = async (email: string, names: string, verificationToken: string) => {
     try {
         const info = transporter.sendMail({
-            from: process.env.MAIL_USER,
+            from: "ParkIt",
             to: email,
             subject: "Vanessa Management System Account Verification",
             html:
@@ -59,7 +59,7 @@ const sendAccountVerificationEmail = async (email: string, names: string, verifi
 const sendPaswordResetEmail = async (email: string, names: string, passwordResetToken: string) => {
     try {
         const info = transporter.sendMail({
-            from: process.env.MAIL_USER,
+              from: "ParkIt",
             to: email,
             subject: "NE NodeJS Password Reset",
             html:
@@ -92,7 +92,7 @@ const sendPaswordResetEmail = async (email: string, names: string, passwordReset
 const sendRejectionEmail = async (email: string, names: string) => {
   try {
     await transporter.sendMail({
-      from: process.env.MAIL_USER,
+        from: "ParkIt",
       to: email,
       subject: "Parking Request Rejected",
       html: `
@@ -122,7 +122,7 @@ const sendRejectionEmail = async (email: string, names: string) => {
 const sendParkingSlotConfirmationEmail = async (email: string, names: string, slotNumber: any) => {
   try {
     await transporter.sendMail({
-      from: process.env.MAIL_USER,
+        from: "ParkIt",
       to: email,
       subject: "Parking Slot Confirmation",
       html: `

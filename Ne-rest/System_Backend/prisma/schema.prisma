@@ -1,0 +1,96 @@
+// This file contains the Prisma schema definition for my database.
+
+generator client {
+  provider = "prisma-client-js"
+
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN // application admin
+  PARKING_ATTENDANT // application driver
+  
+  @@map("roles")
+}
+
+enum VerificationStatus {
+  VERIFIED
+  PENDING
+  UNVERIFIED
+
+  @@map("verification_status")
+}
+
+enum PasswordResetStatus {
+  PENDING
+  IDLE
+
+  @@map("password_reset_status")
+}
+
+
+model User {
+  id                   String              @id @default(uuid())
+  names                String
+  email                String              @unique
+  telephone            String?             @unique
+  password             String
+  profilePicture       String              @default("https://firebasestorage.googleapis.com/v0/b/relaxia-services.appspot.com/o/relaxia-profiles%2Fblank-profile-picture-973460_960_720.webp?alt=media") @map("profile_picture")
+  role                 Role                @default(PARKING_ATTENDANT)
+  verificationStatus   VerificationStatus  @default(UNVERIFIED) @map("verification_status")
+  verificationCode     String?             @map("verification_code")
+  verificationExpires  DateTime?           @map("verification_expires")
+  passwordResetStatus  PasswordResetStatus @default(IDLE) @map("password_reset_status")
+  passwordResetCode    String?             @map("password_reset_code")
+  passwordResetExpires DateTime?           @map("password_reset_expires")
+  createdAt            DateTime            @default(now()) @map("created_at")
+  updatedAt            DateTime            @updatedAt @map("updated_at")
+
+  carRecords           CarRecord[]           // Add this line for the relation
+
+  @@map("users")
+}
+
+model Parking {
+  id              String   @id @default(uuid())
+  code            String   @unique
+  name            String
+  location        String
+  totalSpaces     Int
+  availableSpaces Int
+  feePerHour      Float
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  carRecords CarRecord[]
+}
+
+model CarRecord {
+  id            String   @id @default(uuid())
+  plateNumber   String
+  parkingId     String
+  userId        String
+  entryTime     DateTime @default(now())
+  exitTime      DateTime? // null until car exits
+  chargedAmount Float     @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  ticket        Ticket?
+
+  parking Parking @relation(fields: [parkingId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model Ticket {
+  id          String   @id @default(uuid())
+  carRecordId String   @unique
+  issuedAt    DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  carRecord CarRecord @relation(fields: [carRecordId], references: [id])
+}

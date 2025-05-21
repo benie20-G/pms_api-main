@@ -1,0 +1,281 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Kigali Parking Management System API",
+    "version": "1.0.0",
+    "description": "API for managing parking, users, car entries/exits, tickets, and reporting."
+  },
+  "servers": [
+    { "url": "http://localhost:4040/api/v1" }
+  ],
+  "tags": [
+    { "name": "Auth" },
+    { "name": "Users" },
+    { "name": "Parking" },
+    { "name": "CarRecord" },
+    { "name": "Ticket" },
+    { "name": "Report" }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "admin@xwz.com" },
+                  "password": { "type": "string", "example": "password123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/user/create": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "names": { "type": "string", "example": "Uwase Vanessa" },
+                  "email": { "type": "string", "example": "vanessa@xwz.com" },
+                  "telephone": { "type": "string", "example": "+250788226147" },
+                  "password": { "type": "string", "example": "password123" },
+                  "role": { "type": "string", "enum": ["ADMIN", "PARKING_ATTENDANT"], "example": "PARKING_ATTENDANT" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User created" }
+        }
+      }
+    },
+    "/user/all": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "responses": {
+          "200": { "description": "List of users" }
+        }
+      }
+    },
+    "/parking/create": {
+      "post": {
+        "tags": ["Parking"],
+        "summary": "Register a new parking location",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": { "type": "string", "example": "PKG001" },
+                  "name": { "type": "string", "example": "Muhanga" },
+                  "location": { "type": "string", "example": "South Province" },
+                  "totalSpaces": { "type": "integer", "example": 65 },
+                  "feePerHour": { "type": "number", "example": 200 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Parking created" }
+        }
+      }
+    },
+    "/parking/all": {
+      "get": {
+        "tags": ["Parking"],
+        "summary": "Get all parking locations",
+        "responses": {
+          "200": { "description": "List of parking locations" }
+        }
+      }
+    },
+    "/car-records/create": {
+      "post": {
+        "tags": ["CarRecord"],
+        "summary": "Register car entry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "plateNumber": { "type": "string", "example": "RAE123C" },
+                  "parkingId": { "type": "string", "example": "cbc6ed50-960d-44cd-b6cf-7ab14c3e4413" },
+                  "userId": { "type": "string", "example": "1dc108be-7f17-4df1-a990-98f74bd8414f" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Car entry recorded, ticket generated" }
+        }
+      }
+    },
+    "/car-records/all": {
+      "get": {
+        "tags": ["CarRecord"],
+        "summary": "Get all car records",
+        "responses": {
+          "200": { "description": "List of car records" }
+        }
+      }
+    },
+    "/car-records/{id}/exit": {
+      "put": {
+        "tags": ["CarRecord"],
+        "summary": "Record car exit and calculate billing",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "exitTime": { "type": "string", "format": "date-time", "example": "2024-06-19T15:00:00Z" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Car exit recorded, billing calculated" }
+        }
+      }
+    },
+    "/tickets/create": {
+      "post": {
+        "tags": ["Ticket"],
+        "summary": "Create a ticket (usually handled automatically on car entry)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "carRecordId": { "type": "string", "example": "5a928469-2d95-41ae-8cd0-1a171789c2a0" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Ticket created" }
+        }
+      }
+    },
+    "/tickets/all": {
+      "get": {
+        "tags": ["Ticket"],
+        "summary": "Get all tickets",
+        "responses": {
+          "200": { "description": "List of tickets" }
+        }
+      }
+    },
+    "/tickets/{id}": {
+      "get": {
+        "tags": ["Ticket"],
+        "summary": "Get ticket by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Ticket details" }
+        }
+      }
+    },
+    "/report/cars-exited": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get all cars exited between two dates",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time", "example": "2024-06-01T00:00:00Z" }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time", "example": "2024-06-30T23:59:59Z" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "List of exited cars and total charged" }
+        }
+      }
+    },
+    "/report/cars-entered": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get all cars entered between two dates",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time", "example": "2024-06-01T00:00:00Z" }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date-time", "example": "2024-06-30T23:59:59Z" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "List of entered cars" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

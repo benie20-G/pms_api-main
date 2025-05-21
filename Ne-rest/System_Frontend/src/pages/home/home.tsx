@@ -1,10 +1,14 @@
-import React from "react";
+import Footer from "../../components/commons/Footer";
+import Header from "../../components/commons/header";
 import { useNavigate } from "react-router-dom";
 
-const HomePage: React.FC = () => {
+const HomePage = () => {
   const navigate = useNavigate();
 
   return (
+    <div>
+
+      <Header />
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
       <div className="bg-white/80 rounded-xl shadow-lg p-10 max-w-md w-full text-center">
         <h1 className="text-3xl font-bold mb-4 text-blue-700">Parking Management System</h1>
@@ -13,22 +17,16 @@ const HomePage: React.FC = () => {
         </p>
         <div className="flex flex-col gap-4">
           <button
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
-            onClick={() => navigate("/auth/login")}
-          >
-            Login
-          </button>
-          <button
-            className="w-full py-2 px-4 bg-white border border-blue-600 text-blue-700 rounded-lg font-semibold hover:bg-blue-50 transition"
+            className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
             onClick={() => navigate("/auth/register")}
           >
-            Sign Up
+            Get Started
           </button>
         </div>
       </div>
-      <footer className="mt-10 text-gray-500 text-sm">
-        &copy; {new Date().getFullYear()} Parking Management System
-      </footer>
+
+    </div>
+    <Footer/>
     </div>
   );
 };

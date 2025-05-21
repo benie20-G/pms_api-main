@@ -4,8 +4,8 @@
   "description": "Car Parking Management System with Microservices Architecture",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
+    "start": "node api.js && node src/server.js",
+    "dev": "node api.js && nodemon src/server.js",
     "seed": "node prisma/seed.js",
     "prisma:gen": "prisma generate",
     "prisma:migrate": "prisma migrate dev",

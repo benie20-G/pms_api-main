@@ -1,20 +1,26 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import welcome from "../assets/Welcome.jpeg";
+import welcome from "../assets/welcome.png";
+import Header from "../components/commons/header";
+import Footer from "../components/commons/Footer";
+
 const AuthLayout: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col max-h-screen md:flex-row">
-      <div className="w-full  h-64 md:h-auto">
-        <img
-          src={welcome}
-          alt="Auth"
-          className="w-full h-screen object-cover"
-        />
+   
+      <div
+        className="w-full  bg-cover bg-center align-middle"
+        style={{ backgroundImage: `url(${welcome})` }}
+      >
+   <Header/>
+    <div
+        className="w-full h-64 md:h-screen bg-cover bg-center align-middle flex flex-col justify-center items-center m-[30px]"
+      >
+  <Outlet />
+  </div>
+  <Footer/>
       </div>
-      <div className="w-full md:w-2/3 flex items-center justify-center p-8">
-        <Outlet />
-      </div>
-    </div>
+
+    
   );
 };
 

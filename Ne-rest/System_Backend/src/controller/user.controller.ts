@@ -6,6 +6,8 @@ import prisma from "../../prisma/prisma-client";
 import { AuthRequest } from "../types";
 import ServerResponse from "../utils/ServerResponse";
 import { User } from "@prisma/client";
+import { sendAccountVerificationEmail } from "../utils/mail";
+import crypto from "crypto";
 
 config();
 
@@ -40,11 +42,16 @@ const createUser = async (req: Request, res: Response) => {
       { expiresIn: "3d" }
     );
 
+    const verificationCode = crypto.randomInt(100000, 999999).toString();
+    await sendAccountVerificationEmail(email, names, token);
+    
     // Send success response with user and token
     return ServerResponse.created(res, "User created successfully", {
       user,
       token,
     });
+   
+
   } catch (error: any) {
     console.log("error", error);
     // Handle unique constraint errors (e.g., email or telephone already exists)

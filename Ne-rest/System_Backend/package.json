@@ -8,6 +8,7 @@
     "dev": "nodemon --exec ts-node src/app.ts",
     "generate-swagger": "nodemon --exec ts-node src/swagger/index.ts  --ignore src/swagger/doc/swagger.json",
     "start": "ts-node src/app.ts",
+    "seed":"ts-node prisma/seed.ts",
     "build": "tsc",
     "serve": "npx ts-node src/swagger/index.ts",
     "prisma:gen": "npx prisma generate --schema src/prisma/schema.prisma",

@@ -1,4 +1,3 @@
-// prisma/seed.ts
 import { PrismaClient, Role, VerificationStatus, PasswordResetStatus } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
@@ -6,24 +5,30 @@ const prisma = new PrismaClient();
 
 async function main() {
   const adminEmail = 'iratuzibeniegiramata@gmail.com';
+  const adminTelephone = '+250795192369';
 
-  // Check if admin already exists
-  const existingAdmin = await prisma.user.findUnique({
-    where: { email: adminEmail },
+  // Check if admin with same email or telephone exists
+  const existingAdmin = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { email: adminEmail },
+        { telephone: adminTelephone },
+      ],
+    },
   });
 
   if (existingAdmin) {
-    console.log('Admin user already exists.');
+    console.log('Admin user already exists (by email or telephone).');
     return;
   }
 
-  const hashedPassword = await bcrypt.hash('Admin@123', 10); // use a secure password
+  const hashedPassword = await bcrypt.hash('Admin@123', 10);
 
   await prisma.user.create({
     data: {
       names: 'Admin User',
       email: adminEmail,
-      telephone: '+250795192369',
+      telephone: adminTelephone,
       password: hashedPassword,
       role: Role.ADMIN,
       verificationStatus: VerificationStatus.VERIFIED,

@@ -25,12 +25,14 @@ const createUser = async (req: Request, res: Response) => {
     console.log("hashedPassword", hashedPassword);
 
     // Create user in the database
+      const verificationCode = crypto.randomInt(100000, 999999).toString();
     const user = await prisma.user.create({
       data: {
         email,
         names,
         role,
         password: hashedPassword,
+        verificationCode: verificationCode,
         telephone,
       },
     });
@@ -42,8 +44,8 @@ const createUser = async (req: Request, res: Response) => {
       { expiresIn: "3d" }
     );
 
-    const verificationCode = crypto.randomInt(100000, 999999).toString();
-    await sendAccountVerificationEmail(email, names, token);
+  
+    await sendAccountVerificationEmail(email, names, verificationCode);
     
     // Send success response with user and token
     return ServerResponse.created(res, "User created successfully", {

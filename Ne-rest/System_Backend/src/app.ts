@@ -7,6 +7,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerFile from './swagger/doc/swagger.json';
 import cors from 'cors'
 import carRecordRoutes from "./routes/carRecordRoutes";
+import { logger } from './loggers/logger';
 
 // Load environment variables from .env file
 config();
@@ -40,5 +41,6 @@ app.use("*", (req, res) => {
 
 // Start the server and listen on the specified port
 server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
+  logger.info(`Server is running on port ${PORT}`);
+  logger.info(`API Documentation available at http://localhost:${PORT}/api-docs`);
 });
